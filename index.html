@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="es-ES">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>El Ahorcado</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪢</text></svg>"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body
+    class="min-h-screen w-4/5 mx-auto text-center font-sans bg-[radial-gradient(circle_at_center,#fda4af_0%,#ffe4e6_45%,#fafafa_80%)]"
+  >
+    <header>
+      <h2
+  class="mt-8 text-5xl font-bold tracking-wide bg-gradient-to-r from-[#9f1239] to-[#fb7185] bg-clip-text text-transparent"
+  style="font-family: 'Playfair Display', serif"
+>
+  Adivina la palabra
+</h2>
+    </header>
+    <main
+      class="mx-auto mt-6 mb-10 flex w-full max-w-4xl flex-col items-center gap-6 md:flex-row md:items-stretch md:justify-center md:gap-8"
+    >
+      <div
+        id="zona-ahorcado"
+        class="order-1 flex shrink-0 flex-col items-center"
+      >
+        <div id="errores">
+          <!-- SVG del Ahorcado -->
+          <svg
+            id="svg-ahorcado"
+            class="border border-[#fda4af] block my-[10px] mx-auto rounded-lg bg-white"
+            width="260"
+            height="325"
+            viewBox="0 0 200 250"
+          >
+            <!-- Poste básico (Siempre visible) -->
+            <line
+              x1="10"
+              y1="240"
+              x2="150"
+              y2="240"
+              stroke="#e11d48"
+              stroke-width="4"
+            />
+            <line
+              x1="40"
+              y1="240"
+              x2="40"
+              y2="20"
+              stroke="#e11d48"
+              stroke-width="4"
+            />
+            <line
+              x1="40"
+              y1="20"
+              x2="120"
+              y2="20"
+              stroke="#e11d48"
+              stroke-width="4"
+            />
+            <line
+              x1="120"
+              y1="20"
+              x2="120"
+              y2="50"
+              stroke="#e11d48"
+              stroke-width="4"
+            />
+
+            <!-- Partes del cuerpo (Inician ocultas) -->
+            <circle
+              id="cabeza"
+              class="parte-cuerpo hidden"
+              cx="120"
+              cy="70"
+              r="20"
+              stroke="#e11d48"
+              stroke-width="4"
+              fill="none"
+            />
+            <line
+              id="tronco"
+              class="parte-cuerpo hidden"
+              x1="120"
+              y1="90"
+              x2="120"
+              y2="150"
+              stroke="#e11d48"
+              stroke-width="4"
+            />
+            <line
+              id="brazo-izq"
+              class="parte-cuerpo hidden"
+              x1="120"
+              y1="110"
+              x2="90"
+              y2="130"
+              stroke="#e11d48"
+              stroke-width="4"
+            />
+            <line
+              id="brazo-der"
+              class="parte-cuerpo hidden"
+              x1="120"
+              y1="110"
+              x2="150"
+              y2="130"
+              stroke="#e11d48"
+              stroke-width="4"
+            />
+            <line
+              id="pierna-izq"
+              class="parte-cuerpo hidden"
+              x1="120"
+              y1="150"
+              x2="90"
+              y2="190"
+              stroke="#e11d48"
+              stroke-width="4"
+            />
+            <line
+              id="pierna-der"
+              class="parte-cuerpo hidden"
+              x1="120"
+              y1="150"
+              x2="150"
+              y2="190"
+              stroke="#e11d48"
+              stroke-width="4"
+            />
+          </svg>
+          <h3 class="text-lg font-semibold">
+            Número de Errores: <span id="error"></span>
+          </h3>
+          <button
+            type="button"
+            class="mt-4 rounded border border-[#e11d48] bg-[#e11d48] px-5 py-2.5 font-semibold text-white hover:bg-[#be123c]"
+            onclick="empezar()"
+          >
+            Empezar
+          </button>
+        </div>
+      </div>
+
+      <div
+        id="zona-juego"
+        class="order-2 flex w-full flex-col items-center md:min-w-0 md:flex-1 md:justify-between"
+      >
+        <div id="palabra" class="text-[2rem] tracking-[5px] md:pt-4">
+          <h2>palabra</h2>
+        </div>
+        <footer
+          id="teclado"
+          class="mt-10 flex flex-col items-center gap-2 md:mt-auto md:pb-1"
+        ></footer>
+      </div>
+    </main>
+
+    <div
+      id="dialogo"
+      class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40".
+    >
+      <div
+        class="mx-4 max-w-sm rounded-xl border border-[#fda4af] bg-white p-6 text-center shadow-lg"
+      >
+        <p id="dialogo-texto" class="mb-4 text-lg font-semibold text-black"></p>
+        <button
+          id="dialogo-cerrar"
+          type="button"
+          class="rounded-md border border-[#e11d48] bg-[#e11d48] px-4 py-2 text-white hover:bg-[#be123c]"
+        >
+          Aceptar
+        </button>
+      </div>
+    </div>
+
+    <script src="palabras.js"></script>
+    <script>
+      const PALABRA = document.getElementById("palabra");
+      const TECLADO = document.getElementById("teclado");
+      const ERROR = document.getElementById("error");
+      const DIALOGO = document.getElementById("dialogo");
+      const DIALOGO_TEXTO = document.getElementById("dialogo-texto");
+      const DIALOGO_CERRAR = document.getElementById("dialogo-cerrar");
+
+      function mostrarMensaje(texto) {
+        DIALOGO_TEXTO.textContent = texto;
+        DIALOGO.classList.remove("hidden");
+        DIALOGO.classList.add("flex");
+      }
+
+      function cerrarDialogo() {
+        DIALOGO.classList.add("hidden");
+        DIALOGO.classList.remove("flex");
+      }
+
+      DIALOGO_CERRAR.addEventListener("click", cerrarDialogo);
+
+      const partesCuerpo = [
+        "#poste", // Sin fallos
+        "#pierna-izq", // Fallo 1
+        "#pierna-der", // Fallo 2
+        "#tronco", // Fallo 3
+        "#brazo-izq", // Fallo 4
+        "#brazo-der", // Fallo 5
+        "#cabeza", // Fallo 6
+      ];
+
+      let palabraRandom = "";
+      let palabraAdivinada = [];
+
+      let intentos = 6;
+      let error = 0;
+
+      console.log(PALABRAS);
+
+      function pintarErrores() {
+        const parte = document.querySelector(partesCuerpo[error]);
+        if (parte) {
+          parte.classList.remove("hidden");
+          parte.style.display = "block";
+        }
+
+        ERROR.innerHTML = error + "/" + intentos;
+      }
+
+      function pintarPalabra() {
+        PALABRA.innerHTML = palabraAdivinada.join(" ");
+      }
+
+      function empezar() {
+        palabraRandom =
+          PALABRAS[Math.floor(Math.random() * PALABRAS.length)].toUpperCase();
+        palabraAdivinada = Array(palabraRandom.length).fill("_");
+
+        console.log("Palabra Random", palabraRandom);
+        // Ocultamos todas las partes del cuerpo
+        document.querySelectorAll(".parte-cuerpo").forEach((parte) => {
+          parte.classList.add("hidden");
+          parte.style.display = "none";
+        });
+        error = 0;
+        cerrarDialogo();
+        pintarErrores();
+        pintarPalabra();
+        teclado();
+      }
+
+      function teclado() {
+  const TECLADO = document.getElementById("teclado");
+  TECLADO.innerHTML = "";
+
+  const filas = ["QWERTYUIOP", "ASDFGHJKLÑ", "ZXCVBNM"];
+
+  for (let fila of filas) {
+    const filaDiv = document.createElement("div");
+    filaDiv.className = "flex flex-wrap justify-center gap-1";
+
+    for (let letra of fila) {
+      let button = document.createElement("button");
+      button.className =
+        "w-10 h-10 rounded-md border border-[#e11d48] bg-[#fda4af] text-[#9f1239] font-semibold shadow-sm hover:bg-white hover:text-[#e11d48] disabled:opacity-40 disabled:hover:bg-[#fda4af] disabled:hover:text-[#9f1239]";
+      button.id = letra;
+      button.addEventListener("click", () => pulsar(letra));
+      button.innerHTML = letra;
+      filaDiv.appendChild(button);
+    }
+
+    TECLADO.appendChild(filaDiv);
+  }
+}
+
+      function pulsar(valor) {
+        const boton = document.getElementById(valor);
+        boton.disabled = true;
+
+        if (palabraRandom.includes(valor)) {
+          for (let i = 0; i < palabraRandom.length; i++) {
+            if (palabraRandom[i] === valor) {
+              palabraAdivinada[i] = valor;
+            }
+          }
+          pintarPalabra();
+
+          if (!palabraAdivinada.includes("_")) {
+            setTimeout(() => {
+              mostrarMensaje("Has ganado");
+            }, 50);
+          }
+        } else {
+          error = error + 1;
+          pintarErrores();
+
+          if (error === intentos) {
+            setTimeout(() => {
+              mostrarMensaje("Has perdido. La palabra era " + palabraRandom);
+            }, 50);
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
