@@ -1,30 +1,27 @@
-# El Ahorcado — adivina la palabra
+# El Ahorcado
 
-Juego del ahorcado en el navegador: eliges letras y el dibujo SVG se completa con cada fallo.
+Juego clásico de adivinar la palabra: vas fallando letras y el dibujo del ahorcado se va completando.
 
 ## Qué hace
 
-- Elige una palabra al azar de la lista en `palabras.js`
-- Muestra guiones y teclado de letras
-- Dibuja el ahorcado por partes cuando fallas
-- Indica si ganas o pierdes
+- Saca una palabra al azar de `palabras.js` (galaxia, guitarra, chocolate…)
+- Teclado de letras y guiones de la palabra
+- El SVG del ahorcado se rellena con cada error
+- Avisa cuando ganas o cuando se acaba la partida
 
 ## Cómo probarlo
 
-No necesita build. Abre `index.html` o usa la demo.
+Sin instalación: abre `index.html` en el navegador (o la demo).
 
 Demo: https://moussijoelle.github.io/ahorcado-joelle-html/
 
 ## Cómo lo construí
 
-- HTML + JavaScript + Tailwind (CDN)
-- Palabras en `palabras.js`
-- Figura del ahorcado con SVG en el HTML
-- Tipografía Playfair Display
+HTML, JavaScript y Tailwind por CDN. La lista de palabras está aparte en `palabras.js` y el poste/muñeco es un SVG dentro del HTML. Tipografía Playfair Display para el título.
 
 ## Cómo verificarlo
 
-Sin tests. Abro la demo, pruebo aciertos y fallos, y miro que el SVG y el mensaje final respondan.
+Juego una partida acertando y otra fallando a propósito, para ver que el dibujo y el mensaje final cuadren.
 
 ---
 
